@@ -15,11 +15,17 @@
 
 ## 这是什么
 
-CtrlPlane 是一套 AI 驱动的基础设施管理方案。编辑 `servers.yaml` 这一个文件声明你的服务器拓扑，AI（以及配套脚本）自动搞定 SSH 连接、批量执行、VSCode 远程工作区。
+想象你有几台远程服务器——可能是实验室的 GPU 工作站、云上的开发机、或者公司的生产环境。平常你需要打开 XShell 一台台连上去，敲命令，切窗口，来回折腾。
 
-**内置 WorkBuddy Skill（`SKILL.md`）**，安装即用；同时提供核心指令模板，可快速适配 Cursor、Claude Code、GitHub Copilot、Cline 等主流 AI 编码工具。
+CtrlPlane 让这件事变得简单：
 
-**不是又一个 SSH 客户端。** CtrlPlane 是为 AI 设计的——你的大模型助手读 `servers.yaml` 就能理解整个基础设施拓扑，直接 `ssh`/`scp` 操作，不需要 CLI 包装层。
+- **写一个文件**（`servers.yaml`），列出所有服务器的 IP、端口、用户名
+- **告诉 AI**「帮我看下所有服务器的磁盘使用」—— AI 通过 SSH 直接连上去执行，返回结果
+- **在 VSCode 一个窗口里看到所有服务器的文件**，像操作本地文件夹一样
+
+核心理念：**Agent 装在你的主机上，服务器不需要装任何东西。** 不需要在远端部署 agent、daemon、playbook。你的主机通过标准 SSH 协议控制所有节点，AI 作为操作层理解拓扑、执行命令、联动多台机器。
+
+**内置 WorkBuddy Skill（`SKILL.md`）**，安装即用；同时提供核心指令模板，可快速适配 Cursor、Claude Code、GitHub Copilot、Cline 等主流 AI 工具。
 
 ## 为什么不用传统工具
 
