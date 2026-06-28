@@ -2,6 +2,7 @@
   <h1 align="center">CtrlPlane</h1>
   <p align="center"><strong>AI-native infrastructure control plane</strong></p>
   <p align="center">一个 YAML 文件管理所有服务器 · AI 原生理解拓扑 · 零 Agent/零 Daemon</p>
+  <p align="center">内嵌 <strong>WorkBuddy Skill</strong>，开箱即用 · 可适配 <strong>Cursor / Claude Code / Copilot</strong> 等主流 AI 工具</p>
 </p>
 
 <p align="center">
@@ -15,6 +16,8 @@
 ## 这是什么
 
 CtrlPlane 是一套 AI 驱动的基础设施管理方案。编辑 `servers.yaml` 这一个文件声明你的服务器拓扑，AI（以及配套脚本）自动搞定 SSH 连接、批量执行、VSCode 远程工作区。
+
+**内置 WorkBuddy Skill（`SKILL.md`）**，安装即用；同时提供核心指令模板，可快速适配 Cursor、Claude Code、GitHub Copilot、Cline 等主流 AI 编码工具。
 
 **不是又一个 SSH 客户端。** CtrlPlane 是为 AI 设计的——你的大模型助手读 `servers.yaml` 就能理解整个基础设施拓扑，直接 `ssh`/`scp` 操作，不需要 CLI 包装层。
 
@@ -207,22 +210,64 @@ python scripts/setup_keys.py --key ~/.ssh/id_ed25519.pub  # 指定密钥
 5. 重新同步 `~/.ssh/config`
 6. 自动测试免密连接是否成功
 
-## AI 如何工作
+## SKILL.md — AI 操作指令
 
-CtrlPlane 的核心设计理念：**AI 就是操作层，不需要 CLI。**
+CtrlPlane 的核心不只是脚本，更重要的是让 AI 理解你的基础设施拓扑并直接操作。
+
+仓库中的 `SKILL.md` 是为 **WorkBuddy**（[workbuddy.cn](https://www.codebuddy.cn)）编写的 Skill 文件。WorkBuddy 会自动加载 `SKILL.md` 的内容作为 AI 的系统指令，使其理解 `servers.yaml` 的语义和操作规范。
+
+### 安装到 WorkBuddy
+
+```bash
+# 克隆到的任意目录，例如:
+git clone https://github.com/logan2139652/ai-ssh-nodes.git D:/Office_Tools/ctrlplane
+
+# 在 WorkBuddy 中导入 Skill:
+#  左侧栏 → 专家 → 导入 Skill → 选择 SKILL.md
+```
+
+安装后对着 WorkBuddy 说「帮我看下所有服务器的磁盘」即可。
+
+### 适配其他 AI Agent
+
+`SKILL.md` 的语义与 `servers.yaml` 的结构、Python 脚本的使用方式完全通用。只需将核心指令以各工具的格式注入即可。
+
+| 工具 | 适配方式 | 操作 |
+|------|----------|------|
+| **WorkBuddy** | `SKILL.md` | 已内置，直接导入 |
+| **Cursor** | `.cursorrules` | 将核心指令写入项目根目录 `.cursorrules` |
+| **Claude Code** | `CLAUDE.md` | 写入项目根目录 `CLAUDE.md` |
+| **GitHub Copilot** | `.github/copilot-instructions.md` | 写入 `copilot-instructions.md` |
+| **Cline / Roo Code** | `.clinerules` | 写入 `.clinerules` |
+| **通用终端 Agent** | system prompt | 直接注入核心指令 |
+
+**核心指令模板（适用于所有 Agent）：**
 
 ```
-用户编辑 → AI 读取 → 直接执行
-─────────  ──────────  ──────────
-servers.yaml →  AI 理解拓扑 →  ssh <alias> "df -h"
-                               scp file <alias>:/path
-                               并行批量操作
+你是 CtrlPlane 基础设施控制面 AI。你的行为规范：
+
+## 数据层
+- 唯一配置: workspace/servers.yaml
+- 读取 servers.yaml 理解所有服务器的别名、IP、端口、用户、环境、权限
+- 通过服务器的 alias 直接 SSH 连接: ssh <alias> "命令"
+
+## 操作规范
+1. 操作前先读 servers.yaml 理解拓扑
+2. 批量操作多台服务器时，并行执行独立命令
+3. 文件传输使用 scp: scp <file> <alias>:~/path/
+4. servers.yaml 变更后运行: python scripts/sync_ssh_config.py
+5. 生成 VSCode 工作区: python scripts/vscode_gen.py
+
+## 安全规则
+- production + confirm_required: 修改性操作前必须确认
+- 禁止命令: rm -rf /, dd if=, mkfs, shutdown/reboot, fdisk, chmod -R 777 /, iptables -F(生产), fork bomb, curl|bash(未审查)
+- 操作结果透明汇报: ✓ server: command → 结果
+
+## 首次设置（无 servers.yaml 时）
+- 向用户收集服务器信息 → 创建 workspace/servers.yaml → sync → 测试连接
 ```
 
-AI 看到 `servers.yaml` 就知道：
-- 有几台服务器、各是什么环境
-- 哪些是生产环境需要谨慎操作
-- 对 `confirm_required` 的服务器，修改性操作前会自动请求用户确认
+`servers.yaml` 结构和三个 Python 脚本对任何 Agent 都是透明的——数据格式不变，脚本用法不变，变的只是 AI 如何被"教会"使用它们。
 
 ## 依赖
 
