@@ -285,20 +285,11 @@ git clone https://github.com/logan2139652/ai-ssh-nodes.git D:/Office_Tools/ctrlp
 
 ## 效率 Tips
 
-```bash
-# SSH 免密登录
-ssh-keygen -t ed25519 -C "ctrlplane"
-ssh-copy-id -i ~/.ssh/id_ed25519 user@host
-
-# SSH 连接复用（大幅提速）
-cat >> ~/.ssh/config << 'EOF'
-Host *
-    ControlMaster auto
-    ControlPath ~/.ssh/sockets/%r@%h-%p
-    ControlPersist 600
-    ServerAliveInterval 60
-EOF
-```
+- **别关 INFRA 工作区**：VSCode 会记住连接状态，下次打开直接恢复所有节点
+- **多台并行**：对 AI 说「在两台上同时跑 df -h」，命令会自动并行执行
+- **快捷任务**：`Ctrl+Shift+B` 打开 VSCode Tasks，一键 Health Check / Disk / Memory 所有服务器
+- **新增服务器**：编辑 servers.yaml → `python scripts/sync_ssh_config.py` → 重载工作区，三步完成
+- **密码变免密**：`python scripts/setup_keys.py`，逐台输一次密码，之后零摩擦
 
 ## License
 
