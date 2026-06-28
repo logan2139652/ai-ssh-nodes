@@ -124,11 +124,14 @@ python scripts/sync_ssh_config.py
 用户说"帮我管理服务器"但 servers.yaml 不存在：
 
 1. **问用户要信息**：每台服务器的别名、IP、端口、用户、用途、环境
-2. **创建 servers.yaml**：写入 ~/.workbuddy/skills/ctrlplane/workspace/servers.yaml
+2. **创建 servers.yaml**：写入 workspace/servers.yaml
 3. **同步 SSH config**：`python scripts/sync_ssh_config.py`
-4. **测试连接**：逐台 `ssh <alias> "uname -a"`
-5. **展示概貌**：告诉用户他的基础设施全貌
-6. **推荐免密**：如果还没配置密钥，推荐 `ssh-keygen -t ed25519 && ssh-copy-id`
+4. **确认 VSCode 扩展**：检查是否已安装 Remote-SSH（`ms-vscode-remote.remote-ssh`），未安装则引导安装
+5. **测试连接**：逐台 `ssh <alias> "uname -a"` 或通过 VSCode Remote-SSH 连接
+6. **展示概貌**：告诉用户他的基础设施全貌
+7. **认证方式**：
+   - 密码登录：不设 identity_file，连接时输入密码（适合新手，更直观）
+   - 密钥免密：`identity_file: ~/.ssh/id_rsa` + 推送公钥到服务器（适合高频使用）
 
 ## 安全规则
 
@@ -158,4 +161,42 @@ python scripts/sync_ssh_config.py
 - Python 3.8+（sync_ssh_config.py / vscode_gen.py 需要）
 - PyYAML（`pip install pyyaml`）
 - OpenSSH client
-- VSCode + Remote-SSH（可选）
+- VSCode + **Remote - SSH 扩展**（微软官方，ID: `ms-vscode-remote.remote-ssh`）
+
+### VSCode Remote-SSH 前置步骤
+
+**必须先安装扩展**，否则无法通过 VSCode 连接远程服务器：
+
+1. 打开 VSCode → `Ctrl+Shift+X`（扩展面板）
+2. 搜索 **"Remote - SSH"**（作者：Microsoft）
+3. 点击 **安装**
+4. 安装完成后，左侧活动栏会出现 **「显示器+插头」** 图标
+
+### 连接行为说明
+
+VSCode Remote-SSH 的连接机制：
+
+| 行为 | 说明 |
+|------|------|
+| **逐台连接** | 默认每台服务器打开独立窗口（简单直接） |
+| **Multi-root 工作区** | 一个窗口内管理多台服务器 + 本地文件（推荐） |
+
+**Multi-root 工作区使用方法（推荐）：**
+
+```bash
+# 1. 生成工作区文件
+python scripts/vscode_gen.py
+
+# 2. 关键步骤：先单独连一次任意节点（让 VSCode 初始化 SSH 状态）
+#    Ctrl+Shift+P → Remote-SSH: Connect to Host... → 选 dell-node4 → 输入密码
+
+# 3. 在已连接的远端窗口中，打开工作区文件
+#    File → Open Workspace from File → 选择 workspace/infra.code-workspace
+
+# 4. 现在资源管理器里同时显示：
+#    - Shared Workspace（本地）
+#    - dell-node4（远端 /home/jkw/）
+#    - dell-node8（远端 /home/jkw/）
+```
+
+⚠️ **注意**：如果直接在本地窗口打开 `.code-workspace`，远端节点可能显示为「无法解析」或连不上。必须先通过 Remote-SSH 连过一次，再加载工作区。
