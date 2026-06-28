@@ -1,0 +1,30 @@
+# 个人服务器数据（勿提交）
+workspace/servers.yaml
+servers.yaml
+
+# 生成产物
+workspace/infra.code-workspace
+infra.code-workspace
+workspace/*.code-workspace
+*.code-workspace
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+*.bak
+*.swp
+*~
+
+# IDE
+.vscode/
+.idea/
+
+# SSH 备份
+*.config.bak

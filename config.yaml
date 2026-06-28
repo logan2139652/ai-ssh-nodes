@@ -1,0 +1,12 @@
+# CtrlPlane 工作区配置
+#
+# workspace_dir: 服务器元数据和共享文件的存放目录
+#
+# 默认（不设置时）：内嵌在 skill 目录中
+#   ~/.workbuddy/skills/ctrlplane/workspace/
+#
+# 自定义：取消注释并改为你想要的路径，例如：
+#   ~/my-infra/
+#   /home/user/projects/infra-workspace/
+#
+# workspace_dir: ~/my-infra

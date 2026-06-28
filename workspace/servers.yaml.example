@@ -1,0 +1,54 @@
+# CtrlPlane — 服务器清单（示例模板）
+#
+# 将此文件复制为 servers.yaml 并填入你的真实服务器信息:
+#   cp servers.yaml.example servers.yaml
+#
+# 字段说明:
+#   [必填]  host          服务器 IP 或域名，如 10.0.0.5 或 my.server.com
+#   [选填]  port          22（默认）
+#   [选填]  user          root（默认）
+#   [选填]  identity_file ~/.ssh/id_ed25519（默认）
+#   [选填]  role          服务器用途描述
+#   [选填]  environment   development / staging / production（默认 development）
+#   [选填]  permission    read_only / read_write / confirm_required（默认 read_write）
+#   [选填]  tags          标签列表，格式: [tag1, tag2]
+#
+# 最简配置只需一行 host:
+#   servers:
+#     my-server:
+#       host: 1.2.3.4
+#
+servers:
+  dev-vm:
+    host: 10.0.0.5            # [必填] 服务器 IP
+    port: 22
+    user: ubuntu
+    identity_file: ~/.ssh/id_ed25519
+    role: 本地开发虚拟机
+    environment: development
+    permission: read_write
+    tags: [docker, dev]
+
+  staging-api:
+    host: api-staging.example.com
+    user: deploy
+    role: API 预发布环境
+    environment: staging
+    permission: read_write
+    tags: [api, staging]
+
+  prod-web-01:
+    host: 10.0.1.10
+    user: root
+    role: 生产 Web 服务器
+    environment: production
+    permission: confirm_required
+    tags: [web, nginx, critical]
+
+  prod-db:
+    host: 10.0.1.20
+    user: root
+    role: 生产数据库主节点
+    environment: production
+    permission: confirm_required
+    tags: [postgres, critical, master]
