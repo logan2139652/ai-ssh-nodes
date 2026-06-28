@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">CtrlPlane</h1>
+  <h1 align="center">ai-ssh-nodes</h1>
   <p align="center"><strong>AI-native infrastructure control plane</strong></p>
   <p align="center">一个 YAML 文件管理所有服务器 · AI 原生理解拓扑 · 零 Agent/零 Daemon</p>
   <p align="center">内嵌 <strong>WorkBuddy Skill</strong>，开箱即用 · 可适配 <strong>Cursor / Claude Code / Copilot</strong> 等主流 AI 工具</p>
@@ -17,7 +17,7 @@
 
 想象你有几台远程服务器——可能是实验室的 GPU 工作站、云上的开发机、或者公司的生产环境。平常你需要打开 XShell 一台台连上去，敲命令，切窗口，来回折腾。
 
-CtrlPlane 让这件事变得简单：
+ai-ssh-nodes 让这件事变得简单：
 
 - **写一个文件**（`servers.yaml`），列出所有服务器的 IP、端口、用户名
 - **告诉 AI**「帮我看下所有服务器的磁盘使用」—— AI 通过 SSH 直接连上去执行，返回结果
@@ -36,7 +36,7 @@ CtrlPlane 让这件事变得简单：
 | ssh-config 手动管理 | 只有连接信息，没有语义（环境/角色/权限） |
 | Kubernetes | 容器编排，管不了裸机/VM |
 
-CtrlPlane 的答案：**一个 YAML 文件声明拓扑，AI 直接执行。**
+ai-ssh-nodes 的答案：**一个 YAML 文件声明拓扑，AI 直接执行。**
 
 ## 快速开始
 
@@ -137,7 +137,7 @@ servers:
 ## 目录结构
 
 ```
-ctrlplane/
+ai-ssh-nodes/
 ├── SKILL.md                          # AI 操作手册（WorkBuddy Skill）
 ├── README.md                         # 本文件
 ├── config.yaml                       # 自定义工作区路径（可选）
@@ -157,14 +157,14 @@ ctrlplane/
 
 ### sync_ssh_config.py
 
-从 servers.yaml 自动生成 `~/.ssh/config` 中的 CtrlPlane 管理区块。
+从 servers.yaml 自动生成 `~/.ssh/config` 中的 ai-ssh-nodes 管理区块。
 
 ```bash
 python scripts/sync_ssh_config.py          # 写入
 python scripts/sync_ssh_config.py --dry-run # 预览
 ```
 
-**工作原理**：使用 `# >>> CtrlPlane managed` / `# <<< CtrlPlane managed` 标记区块，区块内由脚本自动管理，区块外的手动配置不受影响。
+**工作原理**：使用 `# >>> ai-ssh-nodes managed` / `# <<< ai-ssh-nodes managed` 标记区块，区块内由脚本自动管理，区块外的手动配置不受影响。
 
 ### vscode_gen.py
 
@@ -218,7 +218,7 @@ python scripts/setup_keys.py --key ~/.ssh/id_ed25519.pub  # 指定密钥
 
 ## SKILL.md — AI 操作指令
 
-CtrlPlane 的核心不只是脚本，更重要的是让 AI 理解你的基础设施拓扑并直接操作。
+ai-ssh-nodes 的核心不只是脚本，更重要的是让 AI 理解你的基础设施拓扑并直接操作。
 
 仓库中的 `SKILL.md` 是为 **WorkBuddy**（[workbuddy.cn](https://www.codebuddy.cn)）编写的 Skill 文件。WorkBuddy 会自动加载 `SKILL.md` 的内容作为 AI 的系统指令，使其理解 `servers.yaml` 的语义和操作规范。
 
@@ -226,7 +226,7 @@ CtrlPlane 的核心不只是脚本，更重要的是让 AI 理解你的基础设
 
 ```bash
 # 克隆到的任意目录，例如:
-git clone https://github.com/logan2139652/ai-ssh-nodes.git D:/Office_Tools/ctrlplane
+git clone https://github.com/logan2139652/ai-ssh-nodes.git D:/Office_Tools/ai-ssh-nodes
 
 # 在 WorkBuddy 中导入 Skill:
 #  左侧栏 → 专家 → 导入 Skill → 选择 SKILL.md
@@ -250,7 +250,7 @@ git clone https://github.com/logan2139652/ai-ssh-nodes.git D:/Office_Tools/ctrlp
 **核心指令模板（适用于所有 Agent）：**
 
 ```
-你是 CtrlPlane 基础设施控制面 AI。你的行为规范：
+你是 ai-ssh-nodes 基础设施控制面 AI。你的行为规范：
 
 ## 数据层
 - 唯一配置: workspace/servers.yaml

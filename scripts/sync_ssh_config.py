@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-CtrlPlane — SSH config 同步器
+ai-ssh-nodes — SSH config 同步器
 
-从 servers.yaml 生成 ~/.ssh/config 的 CtrlPlane 管理区块。
+从 servers.yaml 生成 ~/.ssh/config 的 ai-ssh-nodes 管理区块。
 读取 servers.yaml 中的连接信息（host/port/user/identity_file 等），
 写入 ~/.ssh/config 的标记区块中（区块外的手动配置不受影响）。
 
@@ -27,9 +27,9 @@ CONFIG_FILE = SKILL_DIR / "config.yaml"
 DEFAULT_WORKSPACE = SKILL_DIR / "workspace"
 SSH_CONFIG = Path.home() / ".ssh" / "config"
 
-# ~/.ssh/config 中 CtrlPlane 管理的标记行
-BLOCK_START = "# >>> CtrlPlane managed — DO NOT EDIT between markers <<<"
-BLOCK_END = "# <<< CtrlPlane managed"
+# ~/.ssh/config 中 ai-ssh-nodes 管理的标记行
+BLOCK_START = "# >>> ai-ssh-nodes managed — DO NOT EDIT between markers <<<"
+BLOCK_END = "# <<< ai-ssh-nodes managed"
 
 
 def resolve_workspace(override=None):
@@ -99,7 +99,7 @@ def sync(dry_run=False, override=None):
         SSH_CONFIG.parent.mkdir(parents=True, exist_ok=True)
         old = ""
 
-    # 替换 CtrlPlane 管理区块（区块外保持不变）
+    # 替换 ai-ssh-nodes 管理区块（区块外保持不变）
     if BLOCK_START in old and BLOCK_END in old:
         before = old.split(BLOCK_START)[0].rstrip()
         after = old.split(BLOCK_END)[1]

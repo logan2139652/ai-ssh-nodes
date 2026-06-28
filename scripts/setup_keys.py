@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CtrlPlane — 一键免密配置
+ai-ssh-nodes — 一键免密配置
 
 读取 servers.yaml，用密码连上每台服务器，推送公钥，
 然后更新 servers.yaml 的 identity_file 字段并重新同步 SSH config。
@@ -109,7 +109,7 @@ def main():
         pubkey = f.read()
 
     print(f"\n{'='*50}")
-    print(f"CtrlPlane — 一键免密配置")
+    print(f"ai-ssh-nodes — 一键免密配置")
     print(f"{'='*50}")
     print(f"  公钥: {key_path}")
     print(f"  服务器: {len(servers)} 台")

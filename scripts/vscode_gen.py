@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CtrlPlane — VSCode .code-workspace 生成器
+ai-ssh-nodes — VSCode .code-workspace 生成器
 
 从 servers.yaml 生成 VSCode Multi-root 工作区文件，
 包含本地共享区 + 所有远程服务器的 home 目录。
@@ -30,7 +30,7 @@ except ImportError:
 
 # ── 路径解析 ──────────────────────────────────────────────────────────────────
 
-SKILL_DIR = Path(__file__).parent.parent  # ~/.workbuddy/skills/ctrlplane/
+SKILL_DIR = Path(__file__).parent.parent  # ~/.workbuddy/skills/ai-ssh-nodes/
 CONFIG_FILE = SKILL_DIR / "config.yaml"
 DEFAULT_WORKSPACE = SKILL_DIR / "workspace"  # 内嵌默认目录
 
@@ -146,14 +146,14 @@ def build_settings(servers: dict, workspace_dir: Path) -> dict:
         env_map[env].append(alias)
 
     ai_context = {
-        "ctrlplane.workspace_dir": str(workspace_dir),
-        "ctrlplane.servers": {},
-        "ctrlplane.environments": env_map,
-        "ctrlplane.generated": datetime.now().isoformat(),
+        "ai_ssh_nodes.workspace_dir": str(workspace_dir),
+        "ai_ssh_nodes.servers": {},
+        "ai_ssh_nodes.environments": env_map,
+        "ai_ssh_nodes.generated": datetime.now().isoformat(),
     }
 
     for alias, s in servers.items():
-        ai_context["ctrlplane.servers"][alias] = {
+        ai_context["ai_ssh_nodes.servers"][alias] = {
             "host": f"{s.get('host')}:{s.get('port', 22)}",
             "os": s.get("os", ""),
             "type": s.get("type", ""),
@@ -268,7 +268,7 @@ def main():
         if "uri" in f:
             print(f"    ▸ {f['name']}")
     print()
-    print(f"  AI Context: 已注入 (ctrlplane.workspace_dir = {workspace_dir})")
+    print(f"  AI Context: 已注入 (ai_ssh_nodes.workspace_dir = {workspace_dir})")
     print(f"  VSCode Tasks: {len(tasks['tasks'])} 个")
 
     if auto_open:
