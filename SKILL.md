@@ -1,6 +1,6 @@
 ---
 name: ctrlplane
-version: 3.0.0
+version: 0.1.0
 description: "AI-native infrastructure control plane. Multi-server orchestration via SSH — register cloud/VM servers, batch execute commands, cross-server file transfer, generate VSCode remote workspaces. Triggers on: 服务器, 远程, 基础设施, 部署, 编排, 集群, 多台机器, 批量执行, 文件传输, 跨服务器, VSCode远程工作区, server, infrastructure, deploy, orchestrate, cluster, multi-node, remote exec, file transfer."
 agent_created: true
 keywords: infrastructure,server,deploy,orchestration,cluster,multi-node,SSH,remote,file-transfer,vscode,服务器,基础设施,远程,编排,集群,批量执行,传输,工作区
