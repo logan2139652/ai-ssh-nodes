@@ -6,7 +6,7 @@ CtrlPlane — 一键免密配置
 然后更新 servers.yaml 的 identity_file 字段并重新同步 SSH config。
 
 用法:
-  python scripts/setup_keys.py              # 使用默认 id_rsa.pub
+  python scripts/setup_keys.py              # 使用默认 id_ed25519.pub
   python scripts/setup_keys.py --key ~/.ssh/id_ed25519.pub
 """
 
@@ -80,7 +80,7 @@ def push_key(host, port, user, password, pubkey, alias):
 
 def main():
     # 解析 --key 参数
-    key_path = Path.home() / ".ssh" / "id_rsa.pub"
+    key_path = Path.home() / ".ssh" / "id_ed25519.pub"
     args = sys.argv[1:]
     if "--key" in args:
         idx = args.index("--key")
@@ -89,7 +89,7 @@ def main():
 
     if not key_path.exists():
         print(f"✗ 公钥文件不存在: {key_path}")
-        print("  请先生成密钥: ssh-keygen -t rsa -b 4096")
+        print("  请先生成密钥: ssh-keygen -t ed25519")
         sys.exit(1)
 
     if not SERVERS_FILE.exists():
@@ -113,7 +113,7 @@ def main():
     print(f"{'='*50}")
     print(f"  公钥: {key_path}")
     print(f"  服务器: {len(servers)} 台")
-    print(f"  身份文件将设为: ~/.ssh/id_rsa")
+    print(f"  身份文件将设为: ~/.ssh/id_ed25519")
     print()
 
     # 逐台推送
@@ -144,7 +144,7 @@ def main():
     print("\n更新 servers.yaml ...")
     for alias in servers:
         if "identity_file" not in servers[alias]:
-            servers[alias]["identity_file"] = "~/.ssh/id_rsa"
+            servers[alias]["identity_file"] = "~/.ssh/id_ed25519"
 
     with open(SERVERS_FILE, "w", encoding="utf-8") as f:
         yaml.dump(config, f, allow_unicode=True, default_flow_style=False, sort_keys=False)

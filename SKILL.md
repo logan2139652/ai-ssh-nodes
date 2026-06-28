@@ -23,12 +23,24 @@ servers.yaml  →  AI 理解拓扑  →  ssh <alias> 直接连接
             sync_ssh_config   →  ~/.ssh/config
 ```
 
+## 项目根目录
+
+AI 应先定位项目根目录（含本 SKILL.md 的目录），以下所有路径均为相对路径。
+
+```bash
+# 定位项目根目录（含 SKILL.md 的目录）
+SKILL_DIR="$(cd "$(dirname "$0")" && pwd)"
+# 或更简单：SKILL.md 所在目录就是项目根目录
+```
+
+之后所有路径均相对于 `$SKILL_DIR`。
+
 ## 数据层
 
 ### 唯一配置文件
 
 ```
-~/.workbuddy/skills/ctrlplane/
+<项目根目录>/
 ├── config.yaml              ← 自定义工作区路径（可选，默认内嵌）
 └── workspace/               ← 默认内嵌工作区
     └── servers.yaml         ← ★ 唯一需要编辑的文件
@@ -83,8 +95,8 @@ servers:
 用户说"看下磁盘" / "更新系统" / "部署 xx"
 
 ```bash
-# 读拓扑
-cat ~/.workbuddy/skills/ctrlplane/workspace/servers.yaml
+# 读拓扑（项目根目录下的 workspace/servers.yaml）
+cat workspace/servers.yaml
 
 # 单台
 ssh <alias> "df -h"
@@ -131,7 +143,7 @@ python scripts/sync_ssh_config.py
 6. **展示概貌**：告诉用户他的基础设施全貌
 7. **认证方式**：
    - 密码登录：不设 identity_file，连接时输入密码（适合新手，更直观）
-   - 密钥免密：`identity_file: ~/.ssh/id_rsa` + 推送公钥到服务器（适合高频使用）
+   - 密钥免密：`identity_file: ~/.ssh/id_ed25519` + 推送公钥到服务器（适合高频使用）
 
 ## 安全规则
 
