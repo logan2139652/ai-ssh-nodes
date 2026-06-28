@@ -45,10 +45,39 @@ vim workspace/servers.yaml
 # 4. 同步到 ~/.ssh/config
 python scripts/sync_ssh_config.py
 
-# 5. （可选）生成 VSCode 远程工作区
-python scripts/vscode_gen.py --open
+# 5. 配置认证——二选一
+
+# 方案 A：密码登录（无需额外配置）
+#   编辑 servers.yaml 时不设 identity_file 即可
+#   → sync 后 SSH 会自动走密码认证
+#   → 适合: 快速上手、少量服务器
+
+# 方案 B：密钥免密登录（推荐高频使用）
+python scripts/setup_keys.py
+#   → 逐台输入密码，自动推送公钥，后续无需重复输入
+#   → 适合: 日常频繁操作、AI Agent 自动化
 
 # 6. 对 AI 说：「帮我看下所有服务器的磁盘使用情况」
+```
+
+### 首次使用 VSCode Remote-SSH（推荐）
+
+如果要通过 VSCode 图形化操作远程服务器，需要额外配置：
+
+```bash
+# 1. 安装 VSCode 扩展（必装）
+#    打开 VSCode → Ctrl+Shift+X → 搜索 "Remote - SSH"（作者: Microsoft）→ 安装
+
+# 2. 生成 Multi-root 工作区
+python scripts/vscode_gen.py
+
+# 3. 打开工作区——关键步骤：不能直接打开！
+#    a) Ctrl+Shift+P → Remote-SSH: Connect to Host... → 选择任意节点 → 输入密码
+#    b) 在已连接的远端窗口中: File → Open Workspace from File → 选 workspace/infra.code-workspace
+#    c) 资源管理器里现在同时显示所有节点的文件
+
+# 4. 重新加载（工作区文件变更后）
+#    Ctrl+Shift+P → File: Open Workspace from File → 重新选 infra.code-workspace
 ```
 
 ## servers.yaml — 唯一配置
@@ -106,7 +135,8 @@ ctrlplane/
 ├── .gitignore                        # 排除 servers.yaml / 生成产物
 ├── scripts/
 │   ├── sync_ssh_config.py            # servers.yaml → ~/.ssh/config
-│   └── vscode_gen.py                 # servers.yaml → .code-workspace
+│   ├── vscode_gen.py                 # servers.yaml → .code-workspace
+│   └── setup_keys.py                 # 一键推送公钥，配置免密登录
 └── workspace/
     ├── servers.yaml.example          # 配置模板（你的真实配置不提交）
     ├── scripts/                      # 共享脚本
@@ -132,8 +162,25 @@ python scripts/sync_ssh_config.py --dry-run # 预览
 从 servers.yaml 生成 VSCode Multi-root `.code-workspace` 文件。
 
 ```bash
-python scripts/vscode_gen.py --open            # 生成并打开
+python scripts/vscode_gen.py                 # 生成工作区文件
+python scripts/vscode_gen.py --open           # 生成并打开（不推荐直接 --open）
 python scripts/vscode_gen.py --workspace ~/my-infra  # 指定路径
+```
+
+**⚠️ 正确打开方式（重要）：**
+
+不要直接打开 `infra.code-workspace`，会显示「无法解析工作区文件夹」。必须：
+
+1. 先通过 Remote-SSH 连接一次任意节点（`Ctrl+Shift+P → Remote-SSH: Connect to Host...`）
+2. 在已连接的远端窗口中：`File → Open Workspace from File` → 选择 `infra.code-workspace`
+3. 连接后逐台展开节点 → 输入密码 → 全部目录出现
+
+**工作区文件变更后如何刷新：**
+
+VSCode 不会自动检测 `.code-workspace` 文件变更。需手动重载：
+
+```
+Ctrl+Shift+P → File: Open Workspace from File → 重新选 infra.code-workspace
 ```
 
 生成的 workspace 包含：
@@ -141,6 +188,24 @@ python scripts/vscode_gen.py --workspace ~/my-infra  # 指定路径
 - 每台服务器的远程目录（Remote-SSH）
 - AI Context 注入（settings 中嵌入服务器元数据）
 - 预置 VSCode Tasks（Health Check / Disk / Memory / Docker）
+
+### setup_keys.py
+
+一键免密配置：用密码连上每台服务器，自动推送公钥，更新配置。
+
+```bash
+python scripts/setup_keys.py              # 使用默认 ~/.ssh/id_rsa.pub
+python scripts/setup_keys.py --key ~/.ssh/id_ed25519.pub  # 指定密钥
+```
+
+**工作流程：**
+
+1. 读取 `servers.yaml` 中所有服务器
+2. **逐台提示输入密码**（每台可不同）
+3. 用 paramiko 连接，推送公钥到 `~/.ssh/authorized_keys`
+4. 自动在 `servers.yaml` 中添加 `identity_file` 字段
+5. 重新同步 `~/.ssh/config`
+6. 自动测试免密连接是否成功
 
 ## AI 如何工作
 
@@ -163,8 +228,9 @@ AI 看到 `servers.yaml` 就知道：
 
 - Python ≥ 3.8
 - PyYAML (`pip install pyyaml`)
+- paramiko (`pip install paramiko` — setup_keys.py 需要)
 - OpenSSH client
-- VSCode + Remote-SSH 扩展（可选）
+- VSCode + Remote-SSH 扩展 (`ms-vscode-remote.remote-ssh`)
 
 ## 效率 Tips
 
