@@ -203,7 +203,7 @@ Ctrl+Shift+P → File: Open Workspace from File → 重新选 infra.code-workspa
 一键免密配置：用密码连上每台服务器，自动推送公钥，更新配置。
 
 ```bash
-python scripts/setup_keys.py              # 使用默认 ~/.ssh/id_rsa.pub
+python scripts/setup_keys.py              # 使用默认 ~/.ssh/id_ed25519.pub
 python scripts/setup_keys.py --key ~/.ssh/id_ed25519.pub  # 指定密钥
 ```
 
@@ -290,6 +290,34 @@ git clone https://github.com/logan2139652/ai-ssh-nodes.git D:/Office_Tools/ai-ss
 - **快捷任务**：`Ctrl+Shift+B` 打开 VSCode Tasks，一键 Health Check / Disk / Memory 所有服务器
 - **新增服务器**：编辑 servers.yaml → `python scripts/sync_ssh_config.py` → 重载工作区，三步完成
 - **密码变免密**：`python scripts/setup_keys.py`，逐台输一次密码，之后零摩擦
+
+## Codex support
+
+This repository also includes agent-specific skill adapters under:
+
+```text
+skills/
+```
+
+The Codex-native skill folder is:
+
+```text
+skills/codex/ai-ssh-nodes/
+```
+
+Install it by copying the skill directory into your Codex skills folder:
+
+```powershell
+Copy-Item -Recurse .\skills\codex\ai-ssh-nodes "$env:USERPROFILE\.codex\skills\ai-ssh-nodes" -Force
+```
+
+Then restart Codex and ask:
+
+```text
+Use $ai-ssh-nodes to inspect my SSH node topology and sync SSH config safely.
+```
+
+The root `SKILL.md` remains the WorkBuddy/general-agent compatibility entry. The `skills/` directory keeps WorkBuddy, Codex, and generic-agent versions side by side while reusing the repository's existing `workspace/servers.yaml` and `scripts/` tools.
 
 ## License
 

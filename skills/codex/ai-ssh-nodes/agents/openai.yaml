@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI SSH Nodes"
+  short_description: "Operate ai-ssh-nodes SSH topology from Codex."
+  default_prompt: "Use $ai-ssh-nodes to inspect my SSH node topology and sync SSH config safely."
