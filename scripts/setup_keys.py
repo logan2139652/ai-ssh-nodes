@@ -175,7 +175,9 @@ def main():
             print(f"  ✗ {alias} — 连接失败: {test_result.stderr.strip()}")
 
     print(f"\n{'='*50}")
-    print("完成！现在可以用 ssh dell-node4 / dell-node8 免密连接了。")
+    print("完成！现在可以免密连接了：")
+    for alias in servers:
+        print(f"  ssh {alias}")
     print(f"{'='*50}")
 
 

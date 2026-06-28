@@ -140,12 +140,12 @@ python scripts/sync_ssh_config.py
 3. **禁止命令**：`rm -rf /`、`dd if=`、`mkfs` 等绝不执行
 4. **操作透明**：
    ```
-   ✓ mininet-vm: df -h → 磁盘使用 45%
-   ✗ huawei-ecs: apt update → 连接超时
+   ✓ node1: df -h → 磁盘使用 45%
+   ✗ node2: apt update → 连接超时
    ```
 5. **生产环境确认模板**：
    ```
-   即将在 huawei-ecs (production) 上执行: apt upgrade -y
+   即将在 node2 (production) 上执行: apt upgrade -y
    此操作属于生产环境修改性操作，请确认。
    ```
 
@@ -188,15 +188,15 @@ VSCode Remote-SSH 的连接机制：
 python scripts/vscode_gen.py
 
 # 2. 关键步骤：先单独连一次任意节点（让 VSCode 初始化 SSH 状态）
-#    Ctrl+Shift+P → Remote-SSH: Connect to Host... → 选 dell-node4 → 输入密码
+#    Ctrl+Shift+P → Remote-SSH: Connect to Host... → 选任意节点 → 输入密码
 
 # 3. 在已连接的远端窗口中，打开工作区文件
 #    File → Open Workspace from File → 选择 workspace/infra.code-workspace
 
 # 4. 现在资源管理器里同时显示：
 #    - Shared Workspace（本地）
-#    - dell-node4（远端 /home/jkw/）
-#    - dell-node8（远端 /home/jkw/）
+#    - node1（远端 /home/user/）
+#    - node2（远端 /home/user/）
 ```
 
 ⚠️ **注意**：如果直接在本地窗口打开 `.code-workspace`，远端节点可能显示为「无法解析」或连不上。必须先通过 Remote-SSH 连过一次，再加载工作区。
